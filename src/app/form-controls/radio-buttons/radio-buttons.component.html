@@ -1,0 +1,10 @@
+<label class="RadioButton__item" *ngFor="let option of options">
+  <input
+    type="radio"
+    class="RadioButton__input"
+    [name]="name"
+    [(ngModel)]="value"
+    (change)="setValue(option.value)"
+    [value]="option.value">
+  <span class="RadioButton__button">{{ option.label || option.value }}</span>
+</label>

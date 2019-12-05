@@ -1,0 +1,33 @@
+@import '../styles/vars-and-helpers';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.Popout {
+  position: fixed;
+  margin-top: $element-spacing * .8;
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: $element-spacing;
+    height: $element-spacing;
+
+    background: $grey-4;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .3);
+  }
+
+  &__inner {
+    position: absolute;
+    left: 0;
+    padding: $element-spacing;
+    background: $grey-4; 
+    border-radius: $element-spacing / 2;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .3);
+  }
+}

@@ -1,0 +1,35 @@
+<div class="LatLon">
+  <div class="LatLon__coordinate">
+    <label class="LatLon__label">Latitude</label>
+    <app-coordinate-input
+      [name]="name + '-latitude'"
+      [coordinateSystem]="coordinateSystem"
+      [coordinate]="CoordinateType.Lat"
+      [ngModel]="latitude"
+      (ngModelChange)="onCoordinateChange($event, CoordinateType.Lat)"
+      [mapLat]="mapLat"
+      [mapLon]="mapLon"
+      [selectedLat]="latitude"
+      [selectedLon]="longitude"
+      (onMapChange)="onMapChange($event)"
+      (onMapClose)="onMapClose()"
+    ></app-coordinate-input>
+  </div>
+
+  <div class="LatLon__coordinate">
+    <label class="LatLon__label">Longitude</label>
+    <app-coordinate-input
+      [name]="name + '-longitude'"
+      [coordinateSystem]="coordinateSystem"
+      [coordinate]="CoordinateType.Lon"
+      [ngModel]="longitude"
+      (ngModelChange)="onCoordinateChange($event, CoordinateType.Lon)"
+      [mapLat]="mapLat"
+      [mapLon]="mapLon"
+      [selectedLat]="latitude"
+      [selectedLon]="longitude"
+      (onMapChange)="onMapChange($event)"
+      (onMapClose)="onMapClose()"
+    ></app-coordinate-input>
+  </div>
+</div>

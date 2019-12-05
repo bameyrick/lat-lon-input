@@ -1,0 +1,98 @@
+<app-input
+  *ngIf="coordinateSystem === CoordinateSystem.DecimalDegrees"
+  class="CoordinateInput__decimal"
+  [(ngModel)]="value"
+  (ngModelChange)="onInput($event)"
+  (paste)="handlePaste($event)"
+  [pattern]="decimalRegex"
+  [popout]="popout"
+  (shown)="onPopoutShown()"
+  (hidden)="onPopoutHidden()"
+></app-input>
+
+<app-input
+  *ngIf="coordinateSystem !== CoordinateSystem.DecimalDegrees"
+  class="CoordinateInput__decimal"
+  [(ngModel)]="dmsDisplayValue"
+  (ngModelChange)="onInput($event)"
+  (paste)="handlePaste($event)"
+  [pattern]="dmsRegex"
+  [popout]="popout"
+  (shown)="onPopoutShown()"
+  (hidden)="onPopoutHidden()"
+></app-input>
+
+<ng-template #popout>
+  <div class="CoordinateInput__popout">
+    <div *ngIf="coordinateSystem !== CoordinateSystem.DecimalDegrees" class="CoordinateInput__popout-fields">
+      <div class="CoordinateInput__col CoordinateInput__col--degrees">
+        <app-input
+          type="number"
+          [min]="0"
+          [max]="degrees"
+          [step]="1"
+          [(ngModel)]="degreesValue"
+          (ngModelChange)="degreesChange($event)"
+          unit="°"
+        ></app-input>
+      </div>
+
+      <div class="CoordinateInput__col">
+        <app-input
+          type="number"
+          [min]="0"
+          [max]="60"
+          [step]="1"
+          [(ngModel)]="minutesValue"
+          (ngModelChange)="minutesChange($event)"
+          unit="'"
+        ></app-input>
+      </div>
+
+      <ng-container *ngIf="coordinateSystem === CoordinateSystem.DegreesMinutesSeconds">
+        <div class="CoordinateInput__col CoordinateInput__col--seconds">
+          <app-input
+            type="number"
+            [min]="0"
+            [max]="60"
+            [(ngModel)]="secondsValue"
+            (ngModelChange)="secondsChange($event)"
+            unit='"'
+          ></app-input>
+        </div>
+      </ng-container>
+      
+
+      <div class="CoordinateInput__col CoordinateInput__col--direction">
+        <app-select
+          [(ngModel)]="direction"
+          [options]="directionOptions"
+          (ngModelChange)="setDecimal()"
+        ></app-select>
+      </div>
+    </div>
+
+    <div class="CoordinateInput__map-container">
+      <aol-map
+        class="CoordinateInput__map"
+        [ngClass]="{ 'CoordinateInput__map--mousedown': mousedown }"
+        (onPointerDrag)="handleMapChange($event)"
+        (onMoveEnd)="handleMapChange($event)"
+        (onClick)="handleMapChange($event)"
+        (mousedown)="mousedown = true"
+        (mouseup)="mousedown = false"
+      >
+        <aol-interaction-default></aol-interaction-default>
+        <aol-view [zoom]="12">
+          <aol-coordinate [x]="mapLon" [y]="mapLat" [srid]="srid"></aol-coordinate>
+        </aol-view>
+        
+        <aol-layer-tile>
+          <aol-source-osm></aol-source-osm>
+        </aol-layer-tile>
+      </aol-map>
+    </div>
+
+    <small class="CoordinateInput__instructions">Drag to pan, scroll to zoom</small>
+  </div>
+</ng-template>

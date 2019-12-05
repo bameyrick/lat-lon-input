@@ -1,0 +1,23 @@
+@import '../../styles/vars-and-helpers';
+
+.Input {
+  &__control {
+    display: flex;
+  }
+
+  &__input {
+    @include input;
+    width: 100%;
+
+    &.ng-invalid {
+      border-color: $error;
+    }
+  }
+
+  &__unit {
+    @include input;
+    min-width: 1em;
+    border-left: 0;
+    text-align: center;
+  }
+}

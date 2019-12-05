@@ -1,0 +1,27 @@
+@import 'app/styles/vars-and-helpers';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: $black;
+  color: $white;
+  margin: 0;
+  padding: $element-spacing;
+}
+
+@import 'app/styles/components';
+
+.content-panel {
+  height: calc(100% - #{$element-spacing});
+  padding: $element-spacing;
+  background: $grey-1;
+  border: 1px solid $grey-3;
+}

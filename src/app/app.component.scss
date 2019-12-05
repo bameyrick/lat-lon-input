@@ -1,0 +1,10 @@
+@import 'styles/vars-and-helpers';
+
+p {
+  font-family: Lato;
+}
+
+.format-toggle {
+  display: block;
+  margin: 0 0 $element-spacing;
+}

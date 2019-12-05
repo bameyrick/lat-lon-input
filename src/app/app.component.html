@@ -1,0 +1,10 @@
+<div class="content-panel">
+  <app-radio-buttons
+    class="format-toggle"
+    [options]="coordinateSystems"
+    name="coordinate-system"
+    [(ngModel)]="coordinateSystem"
+  ></app-radio-buttons>
+
+  <app-lat-lon-input [coordinateSystem]="coordinateSystem"></app-lat-lon-input>
+</div>

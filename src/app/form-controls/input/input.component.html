@@ -1,0 +1,20 @@
+
+<div class="Input__control">
+  <input
+    [type]="type"
+    [name]="name"
+    [min]="min"
+    [max]="max"
+    [step]="step"
+    [pattern]="pattern"
+    [readonly]="readonly"
+    [(ngModel)]="value"
+    (ngModelChange)="setValue($event)"
+    (keydown)="keydown($event)"
+    (input)="input($event)"
+    (focus)="focus.emit($event)"
+    (blur)="blur.emit($event)"
+    class="Input__input"
+  >
+  <span *ngIf="unit" class="Input__unit">{{ unit }}</span>
+</div>

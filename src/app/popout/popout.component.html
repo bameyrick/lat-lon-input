@@ -1,0 +1,5 @@
+<div *ngIf="open" class="Popout" [style.width]="width" [style.opacity]="opacity">
+  <div class="Popout__inner" #popout [style.left]="left">
+    <ng-container *ngTemplateOutlet="template"></ng-container>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+@mixin input {
+  font-size: 1em;
+  padding: .25em;
+  line-height: 1;
+  border: 1px solid $grey-3;
+  border-radius: 0;
+  box-shadow: none;
+  background: $grey-2;
+  color: $white;
+
+  &:focus {
+    border-color: $primary;
+    outline: 0;
+  }
+}
