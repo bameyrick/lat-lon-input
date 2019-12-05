@@ -1,4 +1,5 @@
 import { DegreesMinutesSeconds } from '../types/dms';
+import { DegreesDecimalMinutes } from '../types/ddm';
 import { trimCoordinate } from './trim-coordinate';
 
 export function degreesMinutesSecondsStringToDecimalDegrees(dms: string): number {
@@ -34,6 +35,25 @@ export function decimalDegreesToDegreesMinutesSeconds(value: number): DegreesMin
     degrees,
     minutes,
     seconds,
+    direction,
+  };
+}
+
+export function degreesDecimalMinutesStringToDecimalDegrees(ddm: string): number {
+  return degreesMinutesSecondsStringToDecimalDegrees(ddm);
+}
+
+export function decimalDegreesToDegreesDecimalMinutes(value: number): DegreesDecimalMinutes {
+  const direction = value < 0 ? -1 : 1;
+
+  value = Math.abs(value);
+
+  const degrees = Math.floor(value);
+
+  const minutes = (value - degrees) * 60;
+  return {
+    degrees,
+    minutes,
     direction,
   };
 }

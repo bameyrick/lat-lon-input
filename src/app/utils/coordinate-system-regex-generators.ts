@@ -12,6 +12,12 @@ export function generateDegreesMinutesSecondsRegex(coordinate: CoordinateType, m
   return generateRegexFromString(regexString, matchingRegex);
 }
 
+export function generateDegreesDecimalMinutesRegex(coordinate: CoordinateType, matchingRegex = false, specialChars = true): RegExp {
+  const regexString = `(\\d{1,${coordinate === CoordinateType.Lat ? 2 : 3}})${ specialChars ? '°' : ' ' }(\\d{1,2})(.\\d{1,4})?${ specialChars ? '\'' : ' ' }([NSEW])`;
+
+  return generateRegexFromString(regexString, matchingRegex);
+}
+
 function generateRegexFromString(regexString: string, matchingRegex: boolean): RegExp {
   if (matchingRegex) {
     return new RegExp(`${regexString}`, 'g');
@@ -19,3 +25,4 @@ function generateRegexFromString(regexString: string, matchingRegex: boolean): R
 
   return new RegExp(`^${regexString}\$`);
 }
+

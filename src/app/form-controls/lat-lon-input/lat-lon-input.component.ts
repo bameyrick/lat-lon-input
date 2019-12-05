@@ -8,7 +8,7 @@ import { CoordinateSystem } from '../../enums/coordinate-system';
 import { CoordinateType } from '../../enums/coordinate-type';
 
 import { degreesMinutesSecondsStringToDecimalDegrees } from '../../utils/convert-coordinates';
-import { generateDegreesMinutesSecondsRegex, generateDecimalDegreesRegex } from '../../utils/coordinate-system-regex-generators';
+import { generateDegreesMinutesSecondsRegex, generateDecimalDegreesRegex, generateDegreesDecimalMinutesRegex } from '../../utils/coordinate-system-regex-generators';
 
 export interface LatLon {
   latitude: number | null;
@@ -41,6 +41,8 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
 
   private dmsMatchingRegex = generateDegreesMinutesSecondsRegex(CoordinateType.Lon, true);
   private dmsSpacesMatchingRegex = generateDegreesMinutesSecondsRegex(CoordinateType.Lon, true, false);
+  private ddmMatchingRegex = generateDegreesDecimalMinutesRegex(CoordinateType.Lon, true);
+  private ddmSpacesMatchingRegex = generateDegreesDecimalMinutesRegex(CoordinateType.Lon, true, false);
   private decimalMatchingRegex = generateDecimalDegreesRegex(CoordinateType.Lon, true);
 
   public onCoordinateChange(value: string, coordinate: CoordinateType): void {
@@ -53,6 +55,8 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
         if (!foundValue) {
           this.findDecimalValue(value, coordinate);
         }
+      } else if (this.coordinateSystem === CoordinateSystem.DegreesDecimalMinutes) {
+
       } else {
         const foundValue = this.findDecimalValue(value, coordinate);
 

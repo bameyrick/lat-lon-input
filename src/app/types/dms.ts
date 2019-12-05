@@ -1,6 +1,5 @@
-export interface DegreesMinutesSeconds {
-  degrees: number;
-  minutes: number;
+import { DegreesDecimalMinutes } from './ddm';
+
+export interface DegreesMinutesSeconds extends DegreesDecimalMinutes {
   seconds: number;
-  direction: -1 | 1;
 }

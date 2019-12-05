@@ -9,8 +9,8 @@ import { CoordinateSystem } from '../../../enums/coordinate-system';
 import { CoordinateType } from '../../../enums/coordinate-type';
 import { Option } from '../../../types/option';
 
-import { degreesMinutesSecondsToDecimalDegrees, decimalDegreesToDegreesMinutesSeconds } from '../../../utils/convert-coordinates';
-import { generateDecimalDegreesRegex, generateDegreesMinutesSecondsRegex } from '../../../utils/coordinate-system-regex-generators';
+import { degreesMinutesSecondsToDecimalDegrees, decimalDegreesToDegreesMinutesSeconds, decimalDegreesToDegreesDecimalMinutes } from '../../../utils/convert-coordinates';
+import { generateDecimalDegreesRegex, generateDegreesMinutesSecondsRegex, generateDegreesDecimalMinutesRegex } from '../../../utils/coordinate-system-regex-generators';
 import { trimCoordinate } from '../../../utils/trim-coordinate';
 import { LatLon } from '../lat-lon-input.component';
 import { Colours } from '../../../enums/colours';
@@ -48,14 +48,17 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
   public directionOptions: Option[] = [];
 
   public degreesValue: number | null = null;
+  public decimalMinutesValue: number | null = null;
   public minutesValue: number | null = null;
   public secondsValue: number | null = null;
   public dmsDisplayValue: string;
+  public ddmDisplayValue: string;
 
   public CoordinateSystem = CoordinateSystem;
 
   public decimalRegex: RegExp;
   public dmsRegex: RegExp;
+  public ddmRegex: RegExp;
 
   private readonly srid = 'EPSG:4326';
   public readonly Colours = Colours;
@@ -71,6 +74,7 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
 
       this.decimalRegex = generateDecimalDegreesRegex(this.coordinate);
       this.dmsRegex = generateDegreesMinutesSecondsRegex(this.coordinate);
+      this.ddmRegex = generateDegreesDecimalMinutesRegex(this.coordinate);
     }
   }
 
@@ -79,21 +83,23 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
       this.value = value.toString();
 
       const dms = decimalDegreesToDegreesMinutesSeconds(value);
+      const ddm = decimalDegreesToDegreesDecimalMinutes(value);
 
       this.degreesValue = dms.degrees;
       this.minutesValue = dms.minutes;
+      this.decimalMinutesValue = Math.round(ddm.minutes * 10000) / 10000;
       this.secondsValue = Math.round(dms.seconds * 10000) / 10000;
       this.direction = dms.direction.toString();
-
-      this.setDisplayValue(this.degreesValue, this.minutesValue, this.secondsValue);
     } else {
       this.degreesValue = null;
       this.minutesValue = null;
+      this.decimalMinutesValue = null;
       this.secondsValue = null;
       this.direction = '1';
-
-      this.setDisplayValue(this.degreesValue, this.minutesValue, this.secondsValue);
     }
+
+    this.setDMSDisplayValue(this.degreesValue, this.minutesValue, this.secondsValue);
+    this.setDDMDisplayValue(this.degreesValue, this.decimalMinutesValue);
   }
 
   public onInput(value: string): void {
@@ -103,6 +109,7 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
   public degreesChange(value: number): void {
     if (value === this.degrees) {
         this.minutesValue = 0;
+        this.decimalMinutesValue = 0;
         this.secondsValue = 0;
     }
     
@@ -126,6 +133,10 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
       this.minutesValue--;
     }
 
+    if (value && this.decimalMinutesValue === 60) {
+      this.minutesValue -= 0.1;
+    }
+
     if (value && this.degreesValue === this.degrees) {
       this.degreesValue--;
     }
@@ -136,19 +147,35 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
   public setDecimal(): void {
     const degrees = this.degreesValue || 0;
     const minutes = this.minutesValue || 0;
+    const decimalMinutes = this.decimalMinutesValue || 0;
     const seconds = this.secondsValue || 0;
 
     this.setValue(degreesMinutesSecondsToDecimalDegrees(parseInt(this.direction, 10), degrees, minutes, seconds));
 
-    this.setDisplayValue(degrees, minutes, seconds, );
+    this.setDMSDisplayValue(degrees, minutes, seconds);
+    this.setDDMDisplayValue(degrees, decimalMinutes);
   }
 
-  private setDisplayValue(degrees: number | null, minutes: number | null, seconds: number | null): void {
+  private setDMSDisplayValue(degrees: number | null, minutes: number | null, seconds: number | null): void {
     if (!isNullOrUndefined(degrees) && !isNullOrUndefined(minutes) && !isNullOrUndefined(seconds)) {
       this.dmsDisplayValue = `${degrees}°${minutes}'${seconds}"${this.directionOptions.find(option => option.value.toString() === this.direction).label}`
     } else {
       this.dmsDisplayValue = '';
     }
+  }
+
+  private setDDMDisplayValue(degrees: number | null, minutes: number | null): void {
+    if (!isNullOrUndefined(degrees) && !isNullOrUndefined(minutes)) {
+      this.ddmDisplayValue = `${degrees}°${minutes}'${this.directionOptions.find(option => option.value.toString() === this.direction).label}`
+    } else {
+      this.ddmDisplayValue = '';
+    }
+  }
+
+  public handlePaste($event: InputEvent): void {
+    setTimeout(() => {
+      this.setDMSDisplayValue(this.degreesValue, this.minutesValue, this.secondsValue);
+    });
   }
 
   public handleMapChange($event: openlayers.MapBrowserEvent): void {
@@ -164,14 +191,9 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
       this.onMapChange.emit( { latitude, longitude });
     }
   }
-  public handlePaste($event: InputEvent): void {
-    setTimeout(() => {
-      this.setDisplayValue(this.degreesValue, this.minutesValue, this.secondsValue);
-    });
-  }
 
   public onPopoutShown(): void {
-    setTimeout(() => this.mapOpened = true, 200);
+    setTimeout(() => this.mapOpened = true, 300);
   }
 
   public onPopoutHidden(): void {

@@ -30,7 +30,8 @@ $radio-button-colour: #00aded;
     }
   }
 
+
   &__input:checked + &__button {
-    background: darken($radio-button-colour, 10%);
+    background: darken($radio-button-colour, 15);
   }
 }

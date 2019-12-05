@@ -11,12 +11,24 @@
 ></app-input>
 
 <app-input
-  *ngIf="coordinateSystem !== CoordinateSystem.DecimalDegrees"
+  *ngIf="coordinateSystem === CoordinateSystem.DegreesMinutesSeconds"
   class="CoordinateInput__decimal"
   [(ngModel)]="dmsDisplayValue"
   (ngModelChange)="onInput($event)"
   (paste)="handlePaste($event)"
   [pattern]="dmsRegex"
+  [popout]="popout"
+  (shown)="onPopoutShown()"
+  (hidden)="onPopoutHidden()"
+></app-input>
+
+<app-input
+  *ngIf="coordinateSystem === CoordinateSystem.DegreesDecimalMinutes"
+  class="CoordinateInput__decimal"
+  [(ngModel)]="ddmDisplayValue"
+  (ngModelChange)="onInput($event)"
+  (paste)="handlePaste($event)"
+  [pattern]="ddmRegex"
   [popout]="popout"
   (shown)="onPopoutShown()"
   (hidden)="onPopoutHidden()"
@@ -37,19 +49,31 @@
         ></app-input>
       </div>
 
-      <div class="CoordinateInput__col">
+      <div class="CoordinateInput__col CoordinateInput__col--decimal-minutes" *ngIf="coordinateSystem === CoordinateSystem.DegreesDecimalMinutes">
         <app-input
           type="number"
           [min]="0"
           [max]="60"
-          [step]="1"
-          [(ngModel)]="minutesValue"
+          [step]=".1"
+          [(ngModel)]="decimalMinutesValue"
           (ngModelChange)="minutesChange($event)"
           unit="'"
         ></app-input>
       </div>
 
       <ng-container *ngIf="coordinateSystem === CoordinateSystem.DegreesMinutesSeconds">
+        <div class="CoordinateInput__col">
+          <app-input
+            type="number"
+            [min]="0"
+            [max]="60"
+            [step]="1"
+            [(ngModel)]="minutesValue"
+            (ngModelChange)="minutesChange($event)"
+            unit="'"
+          ></app-input>
+        </div>
+
         <div class="CoordinateInput__col CoordinateInput__col--seconds">
           <app-input
             type="number"

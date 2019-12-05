@@ -1,7 +1,7 @@
 @import '../../../styles/vars-and-helpers';
 
 $degrees-width: 4.5em;
-$minutes-seconds-width: 3.65em;
+$minutes-width: 3.65em;
 $seconds-width: 6.2em;
 $direciton-width: 3em;
 
@@ -17,7 +17,7 @@ $direciton-width: 3em;
   }
 
   &__popout {
-    width: calc(#{($minutes-seconds-width * 2) + $seconds-width + $direciton-width} + #{$element-spacing * 4.5});
+    width: calc(#{($minutes-width * 2) + $seconds-width + $direciton-width} + #{$element-spacing * 4.5});
   }
 
   &__popout-fields {
@@ -26,12 +26,16 @@ $direciton-width: 3em;
   }
 
   &__col {
-    flex: 0 0 $minutes-seconds-width;
+    flex: 0 0 $minutes-width;
     margin: 0 $element-spacing / 2;
     overflow: hidden;
 
     &--degrees {
       flex-basis: $degrees-width;
+    }
+
+    &--decimal-minutes {
+      flex-basis: $seconds-width;
     }
 
     &--seconds {
