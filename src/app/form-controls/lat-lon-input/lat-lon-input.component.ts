@@ -7,7 +7,7 @@ import { BaseControl } from '../base-control';
 import { CoordinateSystem } from '../../enums/coordinate-system';
 import { CoordinateType } from '../../enums/coordinate-type';
 
-import { degreesMinutesSecondsStringToDecimalDegrees } from '../../utils/convert-coordinates';
+import { degreesMinutesSecondsStringToDecimalDegrees, degreesDecimalMinutesStringToDecimalDegrees } from '../../utils/convert-coordinates';
 import { generateDegreesMinutesSecondsRegex, generateDecimalDegreesRegex, generateDegreesDecimalMinutesRegex } from '../../utils/coordinate-system-regex-generators';
 
 export interface LatLon {
@@ -49,21 +49,16 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
     if (value) {
       value = value.trim().toUpperCase();
 
-      if (this.coordinateSystem === CoordinateSystem.DegreesMinutesSeconds) {
-        const foundValue = this.findDMSValue(value, coordinate);
+      let foundValue = this.findDDMValue(value, coordinate);
 
-        if (!foundValue) {
-          this.findDecimalValue(value, coordinate);
-        }
-      } else if (this.coordinateSystem === CoordinateSystem.DegreesDecimalMinutes) {
-
-      } else {
-        const foundValue = this.findDecimalValue(value, coordinate);
-
-        if (!foundValue) {
-          this.findDMSValue(value, coordinate);
-        }
+      if (!foundValue) {
+        foundValue = this.findDMSValue(value, coordinate);
       }
+
+      if (!foundValue) {
+        this.findDecimalValue(value, coordinate);
+      }
+     
     } else {
       this.setNullValues(coordinate);
     }
@@ -74,14 +69,33 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
     this.mapLon = this.longitude;
   }
 
+  private findDDMValue(value: string, coordinate: CoordinateType): boolean {
+    const matches = value.replace(/ /g, '').match(this.ddmMatchingRegex);
+
+    if (matches) {
+      return this.handleMatches(matches.map(match => degreesDecimalMinutesStringToDecimalDegrees(match)), coordinate);
+    }
+
+    const spacesMatches = value.replace(/  +/g, ' ').match(this.ddmSpacesMatchingRegex);
+
+    if (spacesMatches) {
+      return this.handleMatches(spacesMatches.map(match => {
+        const formattedMatch = this.spaceMatchtoFormattedDDM(match);
+        return degreesDecimalMinutesStringToDecimalDegrees(formattedMatch);
+      }), coordinate);
+    }
+
+    return false;
+  }
+
   private findDMSValue(value: string, coordinate: CoordinateType): boolean {
-    const matches = value.match(this.dmsMatchingRegex);
+    const matches = value.replace(/ /g, '').match(this.dmsMatchingRegex);
 
     if (matches) {
       return this.handleMatches(matches.map(match => degreesMinutesSecondsStringToDecimalDegrees(match)), coordinate);
     }
 
-    const spacesMatches = value.match(this.dmsSpacesMatchingRegex);
+    const spacesMatches = value.replace(/  +/g, ' ').match(this.dmsSpacesMatchingRegex);
 
     if (spacesMatches) {
       return this.handleMatches(spacesMatches.map(match => {
@@ -89,21 +103,17 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
         return degreesMinutesSecondsStringToDecimalDegrees(formattedMatch);
       }), coordinate);
     }
-
+    
     return false;
   }
 
   private findDecimalValue(value: string, coordinate: CoordinateType): boolean {
-    const dmsMatches = value.match(this.dmsMatchingRegex);
+    const matches = value.match(this.decimalMatchingRegex) as any[];
 
-    if (!dmsMatches) {
-      const matches = value.match(this.decimalMatchingRegex) as any[];
-
-      if (matches) {
-        return this.handleMatches(matches.map(match => parseFloat(match)), coordinate, true);
-      }
+    if (matches) {
+      return this.handleMatches(matches.map(match => parseFloat(match)), coordinate, true);
     }
-
+    
     return false;
   }
 
@@ -138,6 +148,12 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
     const valueParts = value.split(' ');
 
     return `${valueParts[0]}°${valueParts[1]}'${valueParts[2]}"${valueParts[3]}`;
+  }
+
+  private spaceMatchtoFormattedDDM(value: string): string {
+    const valueParts = value.split(' ');
+
+    return `${valueParts[0]}°${valueParts[1]}'${valueParts[2]}`;
   }
 
   public onMapChange({ latitude, longitude }: LatLon): void {
