@@ -174,7 +174,7 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
 
   private setDDMDisplayValue(degrees: number | null, minutes: number | null): void {
     if (!isNullOrUndefined(degrees) && !isNullOrUndefined(minutes)) {
-      const cursorPosition = this.getCursorPosition(this.dmsInput);
+      const cursorPosition = this.getCursorPosition(this.ddm);
 
       this.ddmDisplayValue = `${degrees}°${minutes}'${this.directionOptions.find(option => option.value.toString() === this.direction).label}`;
 
