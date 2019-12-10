@@ -162,36 +162,29 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
 
   private setDMSDisplayValue(degrees: number | null, minutes: number | null, seconds: number | null): void {
     if (!isNullOrUndefined(degrees) && !isNullOrUndefined(minutes) && !isNullOrUndefined(seconds)) {
-      const cursorPosition = this.getCursorPosition(this.dmsInput);
+      if (this.dmsInput)
+      this.maintainCursorPosition(this.dmsInput);
 
       this.dmsDisplayValue = `${degrees}°${minutes}'${seconds}"${this.directionOptions.find(option => option.value.toString() === this.direction).label}`;
-
-      this.setCursorPosition(this.dmsInput, cursorPosition);
-    } else {
-      this.dmsDisplayValue = '';
     }
   }
 
   private setDDMDisplayValue(degrees: number | null, minutes: number | null): void {
     if (!isNullOrUndefined(degrees) && !isNullOrUndefined(minutes)) {
-      const cursorPosition = this.getCursorPosition(this.ddm);
+      this.maintainCursorPosition(this.ddmInput);
 
       this.ddmDisplayValue = `${degrees}°${minutes}'${this.directionOptions.find(option => option.value.toString() === this.direction).label}`;
-
-      this.setCursorPosition(this.dmsInput, cursorPosition);
-    } else {
-      this.ddmDisplayValue = '';
     }
   }
 
-  private getCursorPosition(input: InputComponent): [number, number] {
-    const element = input.input.nativeElement;
+  private maintainCursorPosition(input: InputComponent): void {
+    if (input) {
+      const element = input.input.nativeElement;
 
-    return [element.selectionStart, element.selectionEnd];
-  }
+      const position = [element.selectionStart, element.selectionEnd];
 
-  private setCursorPosition(input: InputComponent, position: [number, number]): void {
-    setTimeout(() => input.input.nativeElement.setSelectionRange(...position));
+      setTimeout(() => element.setSelectionRange(...position));
+    }
   }
 
   public handlePaste($event: InputEvent): void {
