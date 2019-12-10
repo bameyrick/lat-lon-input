@@ -47,7 +47,28 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
 
   public onCoordinateChange(value: string, coordinate: CoordinateType): void {
     if (value) {
-      value = value.trim().toUpperCase();
+      value = value.toString().trim().toUpperCase();
+
+      switch (this.coordinateSystem) {
+        case CoordinateSystem.DecimalDegrees: {
+          this.findDecimalValue(value, coordinate);
+          break;
+        }
+        case CoordinateSystem.DegreesMinutesSeconds: {
+          this.findDMSValue(value, coordinate);
+          break;
+        }
+        case CoordinateSystem.DegreesDecimalMinutes: {
+          this.findDDMValue(value, coordinate);
+          break;
+        }
+      }
+    }
+  }
+
+  public onPaste(value: string, coordinate: CoordinateType): void {
+    if (value) {
+      value = value.toString().trim().toUpperCase();
 
       let foundValue = this.findDDMValue(value, coordinate);
 

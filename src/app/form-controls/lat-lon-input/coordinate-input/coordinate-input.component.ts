@@ -39,6 +39,8 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
 
   @Input() public selectedLat: number | null;
   @Input() public selectedLon: number | null;
+
+  @Output() public onPaste = new EventEmitter<string>();
   
   @Output() public onMapChange = new EventEmitter<LatLon>();
   @Output() public onMapClose = new EventEmitter<void>();
@@ -190,6 +192,7 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
   public handlePaste($event: InputEvent): void {
     setTimeout(() => {
       this.setDMSDisplayValue(this.degreesValue, this.minutesValue, this.secondsValue);
+      this.onPaste.emit(($event.target as HTMLInputElement).value);
     });
   }
 
