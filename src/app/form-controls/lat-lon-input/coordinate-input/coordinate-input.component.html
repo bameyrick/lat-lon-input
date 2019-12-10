@@ -12,6 +12,7 @@
 
 <app-input
   *ngIf="coordinateSystem === CoordinateSystem.DegreesMinutesSeconds"
+  #dmsInput
   class="CoordinateInput__decimal"
   [(ngModel)]="dmsDisplayValue"
   (ngModelChange)="onInput($event)"
@@ -24,6 +25,7 @@
 
 <app-input
   *ngIf="coordinateSystem === CoordinateSystem.DegreesDecimalMinutes"
+  #ddmInput
   class="CoordinateInput__decimal"
   [(ngModel)]="ddmDisplayValue"
   (ngModelChange)="onInput($event)"

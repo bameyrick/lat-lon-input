@@ -1,6 +1,7 @@
 
 <div class="Input__control">
   <input
+    #input
     [type]="type"
     [name]="name"
     [min]="min"
@@ -10,8 +11,8 @@
     [readonly]="readonly"
     [(ngModel)]="value"
     (ngModelChange)="setValue($event)"
-    (keydown)="keydown($event)"
-    (input)="input($event)"
+    (keydown)="onKeydown($event)"
+    (input)="onInput($event)"
     (focus)="focus.emit($event)"
     (blur)="blur.emit($event)"
     class="Input__input"

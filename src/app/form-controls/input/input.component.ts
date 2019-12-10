@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, ViewChild, ElementRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BaseControl } from '../base-control';
@@ -24,15 +24,17 @@ export class InputComponent extends BaseControl<string | number> {
   @Input() public unit: string;
   @Input() public pattern: string;
 
-  public InputType = InputType;
+  @ViewChild('input') public input: ElementRef;
 
-  public keydown($event: KeyboardEvent): void {
+  public readonly InputType = InputType;
+
+  public onKeydown($event: KeyboardEvent): void {
     if ($event.key === '.' && this.type === InputType.number && this.step && this.step % 1 === 0) {
       $event.preventDefault();
     }
   }
 
-  public input($event: any): void {
+  public onInput($event: any): void {
     if (this.type === InputType.number && this.step && this.step % 1 === 0) {
       $event.target.value = parseInt($event.target.value, 10);
     }

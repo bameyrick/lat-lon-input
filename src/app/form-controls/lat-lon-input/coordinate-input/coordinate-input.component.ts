@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnChanges, SimpleChanges, forwardRef, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnChanges, SimpleChanges, forwardRef, EventEmitter, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import * as openlayers from 'openlayers';
@@ -15,6 +15,7 @@ import { trimCoordinate } from '../../../utils/trim-coordinate';
 import { LatLon } from '../lat-lon-input.component';
 import { Colours } from '../../../enums/colours';
 import { isNullOrUndefined } from 'util';
+import { InputComponent } from '../../input/input.component';
 
 @Component({
   selector: 'app-coordinate-input',
@@ -41,6 +42,9 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
   
   @Output() public onMapChange = new EventEmitter<LatLon>();
   @Output() public onMapClose = new EventEmitter<void>();
+
+  @ViewChild('dmsInput') private dmsInput: InputComponent;
+  @ViewChild('ddmInput') private ddmInput: InputComponent;
 
   private degrees: number;
 
@@ -158,7 +162,11 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
 
   private setDMSDisplayValue(degrees: number | null, minutes: number | null, seconds: number | null): void {
     if (!isNullOrUndefined(degrees) && !isNullOrUndefined(minutes) && !isNullOrUndefined(seconds)) {
-      this.dmsDisplayValue = `${degrees}°${minutes}'${seconds}"${this.directionOptions.find(option => option.value.toString() === this.direction).label}`
+      const cursorPosition = this.getCursorPosition(this.dmsInput);
+
+      this.dmsDisplayValue = `${degrees}°${minutes}'${seconds}"${this.directionOptions.find(option => option.value.toString() === this.direction).label}`;
+
+      this.setCursorPosition(this.dmsInput, cursorPosition);
     } else {
       this.dmsDisplayValue = '';
     }
@@ -166,10 +174,24 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
 
   private setDDMDisplayValue(degrees: number | null, minutes: number | null): void {
     if (!isNullOrUndefined(degrees) && !isNullOrUndefined(minutes)) {
-      this.ddmDisplayValue = `${degrees}°${minutes}'${this.directionOptions.find(option => option.value.toString() === this.direction).label}`
+      const cursorPosition = this.getCursorPosition(this.dmsInput);
+
+      this.ddmDisplayValue = `${degrees}°${minutes}'${this.directionOptions.find(option => option.value.toString() === this.direction).label}`;
+
+      this.setCursorPosition(this.dmsInput, cursorPosition);
     } else {
       this.ddmDisplayValue = '';
     }
+  }
+
+  private getCursorPosition(input: InputComponent): [number, number] {
+    const element = input.input.nativeElement;
+
+    return [element.selectionStart, element.selectionEnd];
+  }
+
+  private setCursorPosition(input: InputComponent, position: [number, number]): void {
+    setTimeout(() => input.input.nativeElement.setSelectionRange(...position));
   }
 
   public handlePaste($event: InputEvent): void {
