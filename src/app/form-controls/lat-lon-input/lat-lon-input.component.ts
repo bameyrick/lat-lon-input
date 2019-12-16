@@ -63,6 +63,14 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
           break;
         }
       }
+
+      if (!isNullOrUndefined(this.latitude)) {
+        this.mapLat = this.latitude;
+      }
+
+      if (!isNullOrUndefined(this.longitude)) {
+        this.mapLon = this.longitude;
+      }
     }
   }
 
@@ -86,8 +94,13 @@ export class LatLonInputComponent extends BaseControl<LatLon> {
 
     this.setValue({ latitude: this.latitude, longitude: this.longitude });
 
-    this.mapLat = this.latitude;
-    this.mapLon = this.longitude;
+    if (!isNullOrUndefined(this.latitude)) {
+      this.mapLat = this.latitude;
+    }
+
+    if (!isNullOrUndefined(this.longitude)) {
+      this.mapLon = this.longitude;
+    }
   }
 
   private findDDMValue(value: string, coordinate: CoordinateType): boolean {

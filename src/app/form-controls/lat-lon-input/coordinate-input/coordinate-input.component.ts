@@ -71,6 +71,8 @@ export class CoordinateInputComponent extends BaseControl<string | null> impleme
 
   private mapOpened = false;
 
+  public mousedown = false;
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.coordinate) {
       this.degrees = this.coordinate === CoordinateType.Lat ? 90 : 180;
